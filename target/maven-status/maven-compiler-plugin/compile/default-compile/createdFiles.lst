@@ -1,0 +1,7 @@
+Genome.class
+Chromosome.class
+FitnessEvaluator$Parser.class
+GeneticAlgorithm.class
+FitnessEvaluator.class
+GeneticAlgorithm$Builder.class
+Population.class

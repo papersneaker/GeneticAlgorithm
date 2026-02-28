@@ -1,0 +1,5 @@
+ChromosomeTest.class
+GeneticAlgorithmTest.class
+GenomeTest.class
+PopulationTest.class
+FitnessEvaluatorTest.class
