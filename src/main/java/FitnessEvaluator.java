@@ -97,7 +97,8 @@ public class FitnessEvaluator {
      *
      * Grammar:
      *   expression  →  term  ( ('+' | '-')  term  )*
-     *   term        →  factor ( ('*' | '/')  factor )*
+     *   term        →  power ( ('*' | '/')  power )*
+     *   power       →  factor ( '^'  power )*          (right-associative)
      *   factor      →  number  |  '(' expression ')'
      */
     private static class Parser {
@@ -141,14 +142,14 @@ public class FitnessEvaluator {
             return result;
         }
 
-        // --- Grammar Rule: term → factor ( ('*' | '/') factor )* ---
+        // --- Grammar Rule: term → power ( ('*' | '/') power )* ---
 
         double parseTerm() throws Exception {
-            double result = parseFactor();
+            double result = parsePower();
 
             while (hasMore() && (peek() == '*' || peek() == '/')) {
                 char op = consume();
-                double right = parseFactor();
+                double right = parsePower();
                 if (op == '*') {
                     result *= right;
                 } else {
@@ -158,6 +159,18 @@ public class FitnessEvaluator {
             }
 
             return result;
+        }
+
+        // --- Grammar Rule: power → factor ( '^' power )* ---  (right-associative)
+
+        double parsePower() throws Exception {
+            double base = parseFactor();
+            if (hasMore() && peek() == '^') {
+                consume(); // eat '^'
+                double exponent = parsePower(); // right-recursive for right-associativity
+                return Math.pow(base, exponent);
+            }
+            return base;
         }
 
         // --- Grammar Rule: factor → number | '(' expression ')' ---
