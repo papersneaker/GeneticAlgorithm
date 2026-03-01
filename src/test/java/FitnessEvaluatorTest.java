@@ -97,6 +97,48 @@ public class FitnessEvaluatorTest {
         assertEquals(42.0, evaluator.evaluate("(6*7)"), 1e-9);
     }
 
+    // --- Parser: Power Operator ---
+
+    @Test
+    @DisplayName("Simple power evaluates correctly")
+    void testSimplePower() throws Exception {
+        assertEquals(8.0, evaluator.evaluate("2^3"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Power of zero evaluates to 1")
+    void testPowerOfZero() throws Exception {
+        assertEquals(1.0, evaluator.evaluate("5^0"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Power binds tighter than multiplication")
+    void testPrecedencePowerOverMultiplication() throws Exception {
+        // 2*3^2 should be 2*(3^2) = 2*9 = 18, NOT (2*3)^2 = 36
+        assertEquals(18.0, evaluator.evaluate("2*3^2"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Power is right-associative")
+    void testPowerRightAssociative() throws Exception {
+        // 2^3^2 should be 2^(3^2) = 2^9 = 512, NOT (2^3)^2 = 64
+        assertEquals(512.0, evaluator.evaluate("2^3^2"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Power combined with addition respects precedence")
+    void testPowerWithAddition() throws Exception {
+        // 1+2^3 should be 1+(2^3) = 1+8 = 9
+        assertEquals(9.0, evaluator.evaluate("1+2^3"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Parenthesized base in power expression")
+    void testParenthesizedBasePower() throws Exception {
+        // (2+1)^3 = 3^3 = 27
+        assertEquals(27.0, evaluator.evaluate("(2+1)^3"), 1e-9);
+    }
+
     // --- Parser: Multi-digit Numbers ---
 
     @Test

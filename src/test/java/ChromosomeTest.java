@@ -50,7 +50,7 @@ public class ChromosomeTest {
         String expr = c.express();
         for (char ch : expr.toCharArray()) {
             assertTrue(
-                Character.isDigit(ch) || "+-*/()".indexOf(ch) >= 0,
+                Character.isDigit(ch) || "+-*/()^".indexOf(ch) >= 0,
                 "Unexpected character in expression: '" + ch + "'"
             );
         }
