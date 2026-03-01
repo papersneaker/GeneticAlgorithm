@@ -15,6 +15,7 @@ public class GenomeTest {
         assertDoesNotThrow(() -> new Genome(0));
         assertDoesNotThrow(() -> new Genome(15));
         assertDoesNotThrow(() -> new Genome(16));
+        assertDoesNotThrow(() -> new Genome(17));
         assertDoesNotThrow(() -> new Genome(7));
     }
 
@@ -27,7 +28,7 @@ public class GenomeTest {
     @Test
     @DisplayName("Gene value above maximum throws exception")
     void testGeneAboveMaxThrows() {
-        assertThrows(IllegalArgumentException.class, () -> new Genome(17));
+        assertThrows(IllegalArgumentException.class, () -> new Genome(18));
     }
 
     @Test
@@ -71,6 +72,12 @@ public class GenomeTest {
     @DisplayName("Power operator expresses correctly")
     void testPowerExpression() {
         assertEquals('^', new Genome(16).express());
+    }
+
+    @Test
+    @DisplayName("Modulo operator expresses correctly")
+    void testModuloExpression() {
+        assertEquals('%', new Genome(17).express());
     }
 
     // --- Mutation ---

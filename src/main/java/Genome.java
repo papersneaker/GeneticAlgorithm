@@ -24,8 +24,9 @@ public class Genome {
     // 14    → '('
     // 15    → ')'
     // 16    → '^'
+    // 17    → '%'
     public static final int GENE_MIN = 0;
-    public static final int GENE_MAX = 16; // inclusive
+    public static final int GENE_MAX = 17; // inclusive
 
     private int gene; // raw gene value
     private static final Random random = new Random();
@@ -71,6 +72,7 @@ public class Genome {
             case 14: return '(';
             case 15: return ')';
             case 16: return '^';
+            case 17: return '%';
             default: throw new IllegalStateException("Unknown gene value: " + gene);
         }
     }

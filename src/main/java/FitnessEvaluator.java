@@ -12,7 +12,8 @@
  *   Mathematical precedence is encoded in the grammar rules:
  *
  *     expression  →  term  ( ('+' | '-')  term  )*
- *     term        →  factor ( ('*' | '/')  factor )*
+ *     term        →  power ( ('*' | '/' | '%')  power )*
+ *     power       →  factor ( '^' power )*          (right-associative)
  *     factor      →  number  |  '(' expression ')'
  *
  *   Higher in the call stack = lower precedence.
@@ -142,19 +143,22 @@ public class FitnessEvaluator {
             return result;
         }
 
-        // --- Grammar Rule: term → power ( ('*' | '/') power )* ---
+        // --- Grammar Rule: term → power ( ('*' | '/' | '%') power )* ---
 
         double parseTerm() throws Exception {
             double result = parsePower();
 
-            while (hasMore() && (peek() == '*' || peek() == '/')) {
+            while (hasMore() && (peek() == '*' || peek() == '/' || peek() == '%')) {
                 char op = consume();
                 double right = parsePower();
                 if (op == '*') {
                     result *= right;
-                } else {
+                } else if (op == '/') {
                     if (right == 0) throw new Exception("Division by zero.");
                     result /= right;
+                } else {
+                    if (right == 0) throw new Exception("Modulo by zero.");
+                    result %= right;
                 }
             }
 
