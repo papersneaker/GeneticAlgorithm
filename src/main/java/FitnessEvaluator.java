@@ -13,7 +13,8 @@
  *
  *     expression  →  term  ( ('+' | '-')  term  )*
  *     term        →  power ( ('*' | '/' | '%')  power )*
- *     power       →  factor ( '^' power )*          (right-associative)
+ *     power       →  factorial ( '^' power )*        (right-associative)
+ *     factorial   →  factor ( '!' )*                 (postfix, left-to-right)
  *     factor      →  number  |  '(' expression ')'
  *
  *   Higher in the call stack = lower precedence.
@@ -98,8 +99,9 @@ public class FitnessEvaluator {
      *
      * Grammar:
      *   expression  →  term  ( ('+' | '-')  term  )*
-     *   term        →  power ( ('*' | '/')  power )*
-     *   power       →  factor ( '^'  power )*          (right-associative)
+     *   term        →  power ( ('*' | '/' | '%')  power )*
+     *   power       →  factorial ( '^'  power )*       (right-associative)
+     *   factorial   →  factor ( '!' )*                 (postfix, left-to-right)
      *   factor      →  number  |  '(' expression ')'
      */
     private static class Parser {
@@ -165,16 +167,33 @@ public class FitnessEvaluator {
             return result;
         }
 
-        // --- Grammar Rule: power → factor ( '^' power )* ---  (right-associative)
+        // --- Grammar Rule: power → factorial ( '^' power )* ---  (right-associative)
 
         double parsePower() throws Exception {
-            double base = parseFactor();
+            double base = parseFactorial();
             if (hasMore() && peek() == '^') {
                 consume(); // eat '^'
                 double exponent = parsePower(); // right-recursive for right-associativity
                 return Math.pow(base, exponent);
             }
             return base;
+        }
+
+        // --- Grammar Rule: factorial → factor ( '!' )* ---  (postfix, left-to-right)
+
+        double parseFactorial() throws Exception {
+            double value = parseFactor();
+            while (hasMore() && peek() == '!') {
+                consume(); // eat '!'
+                if (value < 0 || value != Math.floor(value)) {
+                    throw new Exception("Factorial requires a non-negative integer.");
+                }
+                long n = (long) value;
+                long result = 1;
+                for (long i = 2; i <= n; i++) result *= i;
+                value = (double) result;
+            }
+            return value;
         }
 
         // --- Grammar Rule: factor → number | '(' expression ')' ---
