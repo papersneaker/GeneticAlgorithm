@@ -139,6 +139,33 @@ public class FitnessEvaluatorTest {
         assertEquals(27.0, evaluator.evaluate("(2+1)^3"), 1e-9);
     }
 
+    // --- Parser: Modulo Operator ---
+
+    @Test
+    @DisplayName("Simple modulo evaluates correctly")
+    void testSimpleModulo() throws Exception {
+        assertEquals(1.0, evaluator.evaluate("10%3"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Modulo with zero remainder evaluates correctly")
+    void testModuloZeroRemainder() throws Exception {
+        assertEquals(0.0, evaluator.evaluate("9%3"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Modulo binds at the same level as multiplication")
+    void testPrecedenceModuloWithAddition() throws Exception {
+        // 1+10%3 should be 1+(10%3) = 1+1 = 2, NOT (1+10)%3 = 2
+        assertEquals(2.0, evaluator.evaluate("1+10%3"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Modulo by zero throws exception")
+    void testModuloByZeroThrows() {
+        assertThrows(Exception.class, () -> evaluator.evaluate("5%0"));
+    }
+
     // --- Parser: Multi-digit Numbers ---
 
     @Test
