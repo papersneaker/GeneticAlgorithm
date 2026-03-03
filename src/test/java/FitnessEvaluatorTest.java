@@ -166,6 +166,40 @@ public class FitnessEvaluatorTest {
         assertThrows(Exception.class, () -> evaluator.evaluate("5%0"));
     }
 
+    // --- Parser: Factorial Operator ---
+
+    @Test
+    @DisplayName("Simple factorial evaluates correctly")
+    void testSimpleFactorial() throws Exception {
+        assertEquals(24.0, evaluator.evaluate("4!"), 1e-9);  // 4! = 24
+    }
+
+    @Test
+    @DisplayName("Factorial of zero evaluates to 1")
+    void testFactorialOfZero() throws Exception {
+        assertEquals(1.0, evaluator.evaluate("0!"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Factorial binds tighter than power")
+    void testPrecedenceFactorialOverPower() throws Exception {
+        // 2^3! should be 2^(3!) = 2^6 = 64, NOT (2^3)! = 40320
+        assertEquals(64.0, evaluator.evaluate("2^3!"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Factorial combined with addition respects precedence")
+    void testFactorialWithAddition() throws Exception {
+        // 1+3! should be 1+(3!) = 1+6 = 7
+        assertEquals(7.0, evaluator.evaluate("1+3!"), 1e-9);
+    }
+
+    @Test
+    @DisplayName("Factorial of negative number throws exception")
+    void testFactorialNegativeThrows() {
+        assertThrows(Exception.class, () -> evaluator.evaluate("(0-1)!"));
+    }
+
     // --- Parser: Multi-digit Numbers ---
 
     @Test
